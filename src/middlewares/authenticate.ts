@@ -1,11 +1,28 @@
+import type { NextFunction, Request, Response } from "express";
 import { auth } from "../lib/auth";
 import { ApiError } from "../utils/ApiError";
 import { asyncHandler } from "../utils/asyncHandler";
 
-export const authenticate = asyncHandler(async (request, _response, next) => {
+export const authenticate = asyncHandler(async (request: Request, _response: Response, next: NextFunction) => {
+	const headers = new Headers();
+	for (const [key, value] of Object.entries(request.headers)) {
+		if (value === undefined) {
+			continue;
+		}
+
+		if (Array.isArray(value)) {
+			for (const item of value) {
+				headers.append(key, item);
+			}
+			continue;
+		}
+
+		headers.set(key, value);
+	}
+
 	const session = await auth.api.getSession({
 		asResponse: false,
-		headers: request.headers,
+		headers,
 	});
 
 	if (!session?.session || !session.user) {

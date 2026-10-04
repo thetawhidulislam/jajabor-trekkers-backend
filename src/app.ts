@@ -6,7 +6,7 @@ import { corsOptions } from "./config/cors";
 import { authHandler } from "./lib/auth";
 import { errorHandler } from "./middlewares/errorHandler";
 import { notFound } from "./middlewares/notFound";
-import { generalLimiter } from "./middlewares/rateLimiter";
+import { authLimiter, generalLimiter } from "./middlewares/rateLimiter";
 import { apiRouter } from "./routes";
 
 const app = express();
@@ -14,7 +14,7 @@ const app = express();
 app.use(helmet());
 app.use(cors(corsOptions));
 app.use(morgan("dev"));
-
+app.use("/api/auth", authLimiter);
 app.all("/api/auth/*splat", authHandler);
 app.use("/api", generalLimiter);
 app.use(express.json());

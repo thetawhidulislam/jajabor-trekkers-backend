@@ -26,13 +26,13 @@ const parseRequestPart = (schema: z.ZodType, value: unknown, field: string): unk
 export const validate = (schemas: RequestSchemas): RequestHandler => (request, _response, next) => {
 	try {
 		if (schemas.body) {
-			request.body = parseRequestPart(schemas.body, request.body, "body");
+			request.body = parseRequestPart(schemas.body, request.body, "body") as typeof request.body;
 		}
 		if (schemas.query) {
-			request.query = parseRequestPart(schemas.query, request.query, "query");
+			request.query = parseRequestPart(schemas.query, request.query, "query") as typeof request.query;
 		}
 		if (schemas.params) {
-			request.params = parseRequestPart(schemas.params, request.params, "params");
+			request.params = parseRequestPart(schemas.params, request.params, "params") as typeof request.params;
 		}
 		next();
 	} catch (error) {

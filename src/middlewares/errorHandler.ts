@@ -12,6 +12,11 @@ const isMalformedJson = (error: unknown): boolean =>
 	error.type === "entity.parse.failed";
 
 export const errorHandler: ErrorRequestHandler = (error: unknown, _request, response, _next) => {
+	if (response.headersSent) {
+		_next(error);
+		return;
+	}
+
 	if (error instanceof ApiError) {
 		response.status(error.statusCode).json({
 			success: false,
