@@ -1,0 +1,1 @@
+// TODO: define models (User, Destination, DestinationImage, Trip, TripMember, ItineraryItem, PackingItem, Expense, ExpenseSplit, Settlement, Review). Better Auth tables come from its CLI.

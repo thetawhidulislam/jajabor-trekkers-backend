@@ -1,0 +1,2 @@
+// TODO: CORS config
+export {};

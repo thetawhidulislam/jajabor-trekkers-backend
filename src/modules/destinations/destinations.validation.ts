@@ -1,0 +1,2 @@
+// TODO: destinations validation — see .github/copilot-instructions.md
+export {};
