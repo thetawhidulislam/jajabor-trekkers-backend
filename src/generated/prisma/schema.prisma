@@ -62,19 +62,19 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  accounts     Account[]
-  sessions     Session[]
-  verifications Verification[]
-  destinations Destination[] @relation("DestinationCreatedBy")
-  trips        Trip[]        @relation("TripOwner")
-  tripMemberships TripMember[]
-  expenses     Expense[]     @relation("ExpensePaidBy")
-  expenseSplits ExpenseSplit[]
-  settlementsSent Settlement[] @relation("SettlementFromUser")
-  settlementsReceived Settlement[] @relation("SettlementToUser")
-  packingItemsAssigned PackingItem[] @relation("PackingItemAssignedTo")
-  packingItemsAdded PackingItem[] @relation("PackingItemAddedBy")
-  reviews Review[]
+  accounts             Account[]
+  sessions             Session[]
+  verifications        Verification[]
+  destinations         Destination[]  @relation("DestinationCreatedBy")
+  trips                Trip[]         @relation("TripOwner")
+  tripMemberships      TripMember[]
+  expenses             Expense[]      @relation("ExpensePaidBy")
+  expenseSplits        ExpenseSplit[]
+  settlementsSent      Settlement[]   @relation("SettlementFromUser")
+  settlementsReceived  Settlement[]   @relation("SettlementToUser")
+  packingItemsAssigned PackingItem[]  @relation("PackingItemAssignedTo")
+  packingItemsAdded    PackingItem[]  @relation("PackingItemAddedBy")
+  reviews              Review[]
 
   @@index([role])
 }
@@ -96,19 +96,19 @@ model Session {
 }
 
 model Account {
-  id                       String    @id
-  accountId                String
-  providerId               String
-  userId                   String
-  accessToken              String?
-  refreshToken             String?
-  idToken                  String?
-  accessTokenExpiresAt     DateTime?
-  refreshTokenExpiresAt    DateTime?
-  scope                    String?
-  password                 String?
-  createdAt                DateTime  @default(now())
-  updatedAt                DateTime  @updatedAt
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -117,13 +117,13 @@ model Account {
 }
 
 model Verification {
-  id        String   @id
+  id         String   @id
   identifier String
-  value     String
-  expiresAt DateTime
-  userId    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  value      String
+  expiresAt  DateTime
+  userId     String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -141,7 +141,7 @@ model Category {
   destinations Destination[]
 
   @@index([name])
-} 
+}
 
 model Destination {
   id                 String            @id @default(cuid())
@@ -173,12 +173,12 @@ model Destination {
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
 
-  category  Category         @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  creator   User             @relation("DestinationCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
-  images    DestinationImage[]
-  gear      DestinationGear[]
-  trips     Trip[]
-  reviews   Review[]
+  category Category           @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  creator  User               @relation("DestinationCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  images   DestinationImage[]
+  gear     DestinationGear[]
+  trips    Trip[]
+  reviews  Review[]
 
   @@index([categoryId])
   @@index([createdById])
@@ -214,7 +214,7 @@ model GearItem {
   updatedAt   DateTime @updatedAt
 
   destinationGear DestinationGear[]
-  packingItems PackingItem[]
+  packingItems    PackingItem[]
 
   @@index([category])
   @@index([name])
@@ -223,7 +223,7 @@ model GearItem {
 model DestinationGear {
   destinationId String
   gearItemId    String
-  isEssential   Boolean @default(true)
+  isEssential   Boolean  @default(true)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -236,25 +236,25 @@ model DestinationGear {
 }
 
 model Trip {
-  id           String    @id @default(cuid())
-  title        String
+  id            String     @id @default(cuid())
+  title         String
   destinationId String?
-  startDate    DateTime
-  endDate      DateTime
-  budget       Decimal?  @db.Decimal(12, 2)
-  status       TripStatus @default(PLANNING)
-  notes        String?
-  ownerId      String
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  startDate     DateTime
+  endDate       DateTime
+  budget        Decimal?   @db.Decimal(12, 2)
+  status        TripStatus @default(PLANNING)
+  notes         String?
+  ownerId       String
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
 
-  destination Destination? @relation(fields: [destinationId], references: [id], onDelete: SetNull)
-  owner       User         @relation("TripOwner", fields: [ownerId], references: [id], onDelete: Restrict)
-  members     TripMember[]
+  destination    Destination?    @relation(fields: [destinationId], references: [id], onDelete: SetNull)
+  owner          User            @relation("TripOwner", fields: [ownerId], references: [id], onDelete: Restrict)
+  members        TripMember[]
   itineraryItems ItineraryItem[]
-  packingItems PackingItem[]
-  expenses    Expense[]
-  settlements Settlement[]
+  packingItems   PackingItem[]
+  expenses       Expense[]
+  settlements    Settlement[]
 
   @@index([destinationId])
   @@index([ownerId])
@@ -281,17 +281,17 @@ model TripMember {
 }
 
 model ItineraryItem {
-  id            String    @id @default(cuid())
+  id            String   @id @default(cuid())
   tripId        String
   dayNumber     Int
   startTime     String?
   title         String
   description   String?
   location      String?
-  estimatedCost Decimal?  @db.Decimal(12, 2)
-  sortOrder     Int       @default(0)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  estimatedCost Decimal? @db.Decimal(12, 2)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
 
@@ -301,22 +301,22 @@ model ItineraryItem {
 }
 
 model PackingItem {
-  id          String   @id @default(cuid())
-  tripId      String
-  name        String
-  category    String?
-  quantity    Int      @default(1)
-  isPacked    Boolean  @default(false)
-  gearItemId  String?
+  id           String   @id @default(cuid())
+  tripId       String
+  name         String
+  category     String?
+  quantity     Int      @default(1)
+  isPacked     Boolean  @default(false)
+  gearItemId   String?
   assignedToId String?
-  addedById   String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  addedById    String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  trip        Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
-  gearItem    GearItem? @relation(fields: [gearItemId], references: [id], onDelete: SetNull)
-  assignedTo  User?    @relation("PackingItemAssignedTo", fields: [assignedToId], references: [id], onDelete: SetNull)
-  addedBy     User     @relation("PackingItemAddedBy", fields: [addedById], references: [id], onDelete: Restrict)
+  trip       Trip      @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  gearItem   GearItem? @relation(fields: [gearItemId], references: [id], onDelete: SetNull)
+  assignedTo User?     @relation("PackingItemAssignedTo", fields: [assignedToId], references: [id], onDelete: SetNull)
+  addedBy    User      @relation("PackingItemAddedBy", fields: [addedById], references: [id], onDelete: Restrict)
 
   @@index([tripId])
   @@index([assignedToId])
@@ -336,9 +336,9 @@ model Expense {
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 
-  trip     Trip         @relation(fields: [tripId], references: [id], onDelete: Cascade)
-  paidBy   User         @relation("ExpensePaidBy", fields: [paidById], references: [id], onDelete: Restrict)
-  splits   ExpenseSplit[]
+  trip   Trip           @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  paidBy User           @relation("ExpensePaidBy", fields: [paidById], references: [id], onDelete: Restrict)
+  splits ExpenseSplit[]
 
   @@index([tripId])
   @@index([paidById])
@@ -362,19 +362,19 @@ model ExpenseSplit {
 }
 
 model Settlement {
-  id          String    @id @default(cuid())
-  tripId      String
-  fromUserId  String
-  toUserId    String
-  amount      Decimal   @db.Decimal(12, 2)
-  settledAt   DateTime  @default(now())
-  note        String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id         String   @id @default(cuid())
+  tripId     String
+  fromUserId String
+  toUserId   String
+  amount     Decimal  @db.Decimal(12, 2)
+  settledAt  DateTime @default(now())
+  note       String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  trip       Trip  @relation(fields: [tripId], references: [id], onDelete: Cascade)
-  fromUser   User  @relation("SettlementFromUser", fields: [fromUserId], references: [id], onDelete: Restrict)
-  toUser     User  @relation("SettlementToUser", fields: [toUserId], references: [id], onDelete: Restrict)
+  trip     Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  fromUser User @relation("SettlementFromUser", fields: [fromUserId], references: [id], onDelete: Restrict)
+  toUser   User @relation("SettlementToUser", fields: [toUserId], references: [id], onDelete: Restrict)
 
   @@index([tripId])
   @@index([fromUserId])
@@ -400,4 +400,3 @@ model Review {
   @@index([userId])
   @@index([rating])
 }
-
