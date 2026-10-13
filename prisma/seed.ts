@@ -69,6 +69,15 @@ const seedDataSchema = z.object({
 		}
 		categoryNames.add(category.name);
 	});
+	seedData.destinations.forEach((destination, index) => {
+		if (!categoryNames.has(destination.categoryName)) {
+			context.addIssue({
+				code: "custom",
+				path: ["destinations", index, "categoryName"],
+				message: `Unknown category "${destination.categoryName}"; add it to categories first`,
+			});
+		}
+	});
 });
 
 type SeedData = z.infer<typeof seedDataSchema>;
@@ -79,8 +88,14 @@ interface SeedAdmin {
 	password: string;
 }
 
+const seedAdminSchema = z.object({
+	name: z.string().trim().min(1),
+	email: z.email(),
+	password: z.string().min(8),
+});
+
 const getSeedAdmin = (): SeedAdmin => {
-	const name = process.env.SEED_ADMIN_NAME?.trim();
+	const name = process.env.SEED_ADMIN_NAME;
 	const email = process.env.SEED_ADMIN_EMAIL?.trim().toLowerCase();
 	const password = process.env.SEED_ADMIN_PASSWORD;
 	const missing = [
@@ -91,7 +106,14 @@ const getSeedAdmin = (): SeedAdmin => {
 	if (missing.length) {
 		throw new Error(`Missing required seed environment variable(s): ${missing.join(", ")}`);
 	}
-	return { name: name!, email: email!, password: password! };
+	const result = seedAdminSchema.safeParse({ name, email, password });
+	if (!result.success) {
+		const problems = result.error.issues.map((issue) =>
+			`- SEED_ADMIN_${issue.path[0]?.toString().toUpperCase() ?? "CONFIG"}: ${issue.message}`,
+		);
+		throw new Error(`Invalid seed admin configuration:\n${problems.join("\n")}`);
+	}
+	return result.data;
 };
 
 const loadSeedData = async (): Promise<SeedData> => {
@@ -201,24 +223,19 @@ const seedDestinations = async (destinations: SeedData["destinations"], createdB
 
 		const result = await prisma.$transaction(async (transaction) => {
 			const existing = await transaction.destination.findUnique({ where: { slug }, select: { id: true } });
-			if (existing) {
-				await transaction.destination.update({ where: { slug }, data });
-				await transaction.destinationImage.deleteMany({ where: { destinationId: existing.id } });
-				if (images?.length) {
-					await transaction.destinationImage.createMany({
-						data: images.map((image) => ({ destinationId: existing.id, ...image })),
-					});
-				}
-				return "updated" as const;
-			}
-
-			const created = await transaction.destination.create({ data, select: { id: true } });
+			const saved = await transaction.destination.upsert({
+				where: { slug },
+				create: data,
+				update: data,
+				select: { id: true },
+			});
+			await transaction.destinationImage.deleteMany({ where: { destinationId: saved.id } });
 			if (images?.length) {
 				await transaction.destinationImage.createMany({
-					data: images.map((image) => ({ destinationId: created.id, ...image })),
+					data: images.map((image) => ({ destinationId: saved.id, ...image })),
 				});
 			}
-			return "created" as const;
+			return existing ? "updated" as const : "created" as const;
 		});
 		counts[result] += 1;
 	}
