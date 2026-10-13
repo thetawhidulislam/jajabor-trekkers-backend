@@ -23,7 +23,7 @@ export const categoriesController = {
 	}),
 
 	updateCategory: asyncHandler(async (request: Request, response: Response) => {
-		const category = await categoriesService.updateCategory(request.params.id, request.body as CategoryInput);
+		const category = await categoriesService.updateCategory(request.params.id as string, request.body as CategoryInput);
 		sendSuccess(response, {
 			message: "Category updated successfully",
 			data: category,
@@ -31,7 +31,7 @@ export const categoriesController = {
 	}),
 
 	deleteCategory: asyncHandler(async (request: Request, response: Response) => {
-		await categoriesService.deleteCategory(request.params.id);
+		await categoriesService.deleteCategory(request.params.id as string);
 		sendSuccess(response, {
 			message: "Category deleted successfully",
 			data: { id: request.params.id },

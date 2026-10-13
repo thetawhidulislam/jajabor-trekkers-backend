@@ -1,4 +1,4 @@
-import type { RequestHandler } from "express";
+import type { Request, RequestHandler } from "express";
 import { z } from "zod";
 import { ApiError } from "../utils/ApiError";
 
@@ -23,16 +23,25 @@ const parseRequestPart = (schema: z.ZodType, value: unknown, field: string): unk
 	return result.data;
 };
 
+const setRequestPart = (request: Request, field: "body" | "query" | "params", value: unknown): void => {
+	Object.defineProperty(request, field, {
+		configurable: true,
+		enumerable: true,
+		writable: true,
+		value,
+	});
+};
+
 export const validate = (schemas: RequestSchemas): RequestHandler => (request, _response, next) => {
 	try {
 		if (schemas.body) {
-			request.body = parseRequestPart(schemas.body, request.body, "body") as typeof request.body;
+			setRequestPart(request, "body", parseRequestPart(schemas.body, request.body, "body"));
 		}
 		if (schemas.query) {
-			request.query = parseRequestPart(schemas.query, request.query, "query") as typeof request.query;
+			setRequestPart(request, "query", parseRequestPart(schemas.query, request.query, "query"));
 		}
 		if (schemas.params) {
-			request.params = parseRequestPart(schemas.params, request.params, "params") as typeof request.params;
+			setRequestPart(request, "params", parseRequestPart(schemas.params, request.params, "params"));
 		}
 		next();
 	} catch (error) {

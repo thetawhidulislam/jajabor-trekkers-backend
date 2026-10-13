@@ -45,7 +45,6 @@ const imageSchema = z.object({
 
 const destinationFields = {
 	name: z.string().trim().min(1).max(160),
-	slug: z.string().trim().min(1).max(180),
 	division: z.string().trim().min(1).max(100),
 	district: z.string().trim().max(100).nullable().optional(),
 	locationText: z.string().trim().max(500).nullable().optional(),
@@ -60,7 +59,7 @@ const destinationFields = {
 	activities: z.array(z.string().trim().min(1).max(200)),
 	difficulty: difficultySchema,
 	safetyNotes: z.string().trim().max(2000).nullable().optional(),
-	permissionRequired: z.boolean(),
+	permissionRequired: z.boolean().optional(),
 	permissionNote: z.string().trim().max(1000).nullable().optional(),
 	lastVerifiedAt: z.coerce.date().nullable().optional(),
 	categoryId: z.string().trim().min(1),
@@ -97,12 +96,13 @@ const validateDestination = (
 
 export const createDestinationSchema = z.object({
 	...destinationFields,
+	status: statusSchema.optional(),
 	images: z.array(imageSchema).optional(),
 }).strict().superRefine(validateDestination);
 
 export const updateDestinationSchema = z.object({
 	name: destinationFields.name.optional(),
-	slug: destinationFields.slug.optional(),
+	slug: z.string().trim().min(1).max(180).optional(),
 	division: destinationFields.division.optional(),
 	district: destinationFields.district,
 	locationText: destinationFields.locationText,

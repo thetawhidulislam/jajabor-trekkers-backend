@@ -20,7 +20,7 @@ const toSlug = (value: string): string => value
 	.toLowerCase()
 	.trim()
 	.replace(/\s+/g, "-")
-	.replace(/[^a-z0-9-]/g, "")
+	.replace(/[^\p{L}\p{N}-]/gu, "")
 	.replace(/-+/g, "-")
 	.replace(/^-|-$/g, "");
 
