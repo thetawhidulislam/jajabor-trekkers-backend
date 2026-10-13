@@ -1,0 +1,58 @@
+{
+  "categories": [
+    { "name": "Hill Trekking" },
+    { "name": "Coastal Escapes" }
+  ],
+  "destinations": [
+    {
+      "name": "Keokradong Trek",
+      "division": "Chattogram",
+      "district": "Bandarban",
+      "locationText": "Keokradong, Ruma, Bandarban",
+      "description": "A multi-day trek through the Bandarban hill country to one of Bangladesh's best-known mountain summits. Plan with a registered local guide and confirm current access requirements before departure.",
+      "coverImage": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80",
+      "estimatedCostMin": 8500,
+      "estimatedCostMax": 16000,
+      "recommendedDays": 3,
+      "bestTimeToVisit": "November to February",
+      "activities": ["Trekking", "Village visits", "Mountain viewpoints"],
+      "difficulty": "HARD",
+      "safetyNotes": "Travel with a registered local guide, check weather and access conditions, and carry sufficient water.",
+      "permissionRequired": true,
+      "permissionNote": "Confirm current local administration and security permissions before travel.",
+      "categoryName": "Hill Trekking",
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
+          "caption": "Mountain landscape",
+          "sortOrder": 0
+        }
+      ]
+    },
+    {
+      "name": "Cox's Bazar Beach",
+      "division": "Chattogram",
+      "district": "Cox's Bazar",
+      "locationText": "Cox's Bazar sea beach",
+      "description": "A coastal getaway along the Bay of Bengal with a long sandy beach, local seafood, and nearby viewpoints. Check local weather and sea conditions before swimming or boating.",
+      "coverImage": "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1600&q=80",
+      "estimatedCostMin": 5000,
+      "estimatedCostMax": 18000,
+      "recommendedDays": 2,
+      "bestTimeToVisit": "November to March",
+      "activities": ["Beach walks", "Local food", "Sunset viewing"],
+      "difficulty": "EASY",
+      "safetyNotes": "Follow beach safety flags and local lifeguard guidance; avoid swimming during rough conditions.",
+      "permissionRequired": false,
+      "categoryName": "Coastal Escapes",
+      "status": "PUBLISHED",
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1600&q=80",
+          "caption": "Coastal shoreline",
+          "sortOrder": 0
+        }
+      ]
+    }
+  ]
+}

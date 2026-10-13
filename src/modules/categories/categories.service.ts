@@ -1,4 +1,5 @@
 import { ApiError } from "../../utils/ApiError";
+import { findUniqueSlug, generateSlug } from "./category-slug";
 import {
 	countCategoryDestinations,
 	createCategory as insertCategory,
@@ -16,27 +17,13 @@ type CategoryRecord = Awaited<ReturnType<typeof findAllCategories>>[number];
 const isPrismaError = (error: unknown, code: string): boolean =>
 	typeof error === "object" && error !== null && "code" in error && error.code === code;
 
-const toSlug = (value: string): string => value
-	.toLowerCase()
-	.trim()
-	.replace(/\s+/g, "-")
-	.replace(/[^\p{L}\p{N}-]/gu, "")
-	.replace(/-+/g, "-")
-	.replace(/^-|-$/g, "");
-
 const uniqueSlug = async (name: string, excludeId?: string): Promise<string> => {
-	const baseSlug = toSlug(name);
+	const baseSlug = generateSlug(name);
 	if (!baseSlug) {
 		throw ApiError.badRequest("Category name must contain letters or numbers");
 	}
 
-	let candidate = baseSlug;
-	let suffix = 2;
-	while (await findCategoryBySlug(candidate, excludeId)) {
-		candidate = `${baseSlug}-${suffix}`;
-		suffix += 1;
-	}
-	return candidate;
+	return findUniqueSlug(baseSlug, async (candidate) => Boolean(await findCategoryBySlug(candidate, excludeId)));
 };
 
 const mapCategory = (category: CategoryRecord): CategoryView => ({
