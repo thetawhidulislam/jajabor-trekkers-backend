@@ -47,6 +47,12 @@ const addMinor = (left: number, right: number, field: string): number => {
 	return sum;
 };
 
+export const sumMinor = (amountsMinor: number[]): number =>
+	amountsMinor.reduce((sum, amountMinor) => {
+		assertMinor(amountMinor, "amountMinor");
+		return addMinor(sum, amountMinor, "minor-unit sum");
+	}, 0);
+
 const compareIds = (left: string, right: string): number =>
 	left < right ? -1 : left > right ? 1 : 0;
 

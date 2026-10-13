@@ -11,7 +11,13 @@ const expenseInclude = {
 	},
 } satisfies Prisma.ExpenseInclude;
 
+const settlementInclude = {
+	fromUser: { select: { id: true, name: true } },
+	toUser: { select: { id: true, name: true } },
+} satisfies Prisma.SettlementInclude;
+
 export type ExpenseRecord = Prisma.ExpenseGetPayload<{ include: typeof expenseInclude }>;
+export type SettlementRecord = Prisma.SettlementGetPayload<{ include: typeof settlementInclude }>;
 
 export const findAcceptedMemberIds = async (tripId: string, userIds: string[]): Promise<string[]> => {
 	if (userIds.length === 0) {
@@ -140,4 +146,79 @@ export const updateExpense = async (
 
 export const deleteExpense = async (tripId: string, expenseId: string): Promise<void> => {
 	await prisma.expense.delete({ where: { id: expenseId, tripId } });
+};
+
+export const findTripBalanceRecords = async (tripId: string) => {
+	const [members, expenses, settlements] = await Promise.all([
+		prisma.tripMember.findMany({
+			where: { tripId, status: "ACCEPTED" },
+			include: { user: { select: { id: true, name: true } } },
+			orderBy: { userId: "asc" },
+		}),
+		prisma.expense.findMany({
+			where: { tripId },
+			include: {
+				paidBy: { select: { id: true, name: true } },
+				splits: {
+					include: { user: { select: { id: true, name: true } } },
+					orderBy: { userId: "asc" },
+				},
+			},
+		}),
+		prisma.settlement.findMany({
+			where: { tripId },
+			include: settlementInclude,
+		}),
+	]);
+	return { members, expenses, settlements };
+};
+
+export const findTripSettlements = async (tripId: string, skip: number, take: number) => {
+	const where: Prisma.SettlementWhereInput = { tripId };
+	const [settlements, total] = await Promise.all([
+		prisma.settlement.findMany({
+			where,
+			include: settlementInclude,
+			orderBy: [{ settledAt: "desc" }, { createdAt: "desc" }],
+			skip,
+			take,
+		}),
+		prisma.settlement.count({ where }),
+	]);
+	return { settlements, total };
+};
+
+export const createSettlement = async ({
+	tripId,
+	fromUserId,
+	toUserId,
+	amountMinor,
+	note,
+	settledAt,
+}: {
+	tripId: string;
+	fromUserId: string;
+	toUserId: string;
+	amountMinor: number;
+	note?: string;
+	settledAt: Date;
+}): Promise<SettlementRecord> => prisma.settlement.create({
+	data: {
+		tripId,
+		fromUserId,
+		toUserId,
+		amount: fromMinor(amountMinor),
+		note,
+		settledAt,
+	},
+	include: settlementInclude,
+});
+
+export const findSettlementById = async (tripId: string, settlementId: string) => prisma.settlement.findFirst({
+	where: { tripId, id: settlementId },
+	include: settlementInclude,
+});
+
+export const deleteSettlement = async (tripId: string, settlementId: string): Promise<void> => {
+	await prisma.settlement.delete({ where: { id: settlementId, tripId } });
 };

@@ -10,7 +10,7 @@ const amountHasAtMostTwoDecimals = (amount: number): boolean => {
 	}
 };
 
-const expenseAmountSchema = z.number()
+export const expenseAmountSchema = z.number()
 	.finite()
 	.positive()
 	.refine(amountHasAtMostTwoDecimals, "amount must have at most 2 decimal places");
@@ -75,4 +75,22 @@ export const tripExpenseParamsSchema = z.object({
 export const expenseParamsSchema = z.object({
 	tripId: z.string().trim().min(1),
 	expenseId: z.string().trim().min(1),
+}).strict();
+
+export const settlementListQuerySchema = z.object({
+	page: z.coerce.number().int().min(1).default(1),
+	limit: z.coerce.number().int().min(1).max(50).default(10),
+}).strict();
+
+export const createSettlementSchema = z.object({
+	fromUserId: z.string().trim().min(1),
+	toUserId: z.string().trim().min(1),
+	amount: expenseAmountSchema,
+	note: z.string().trim().max(2000).optional(),
+	settledAt: z.coerce.date().optional(),
+}).strict();
+
+export const settlementParamsSchema = z.object({
+	tripId: z.string().trim().min(1),
+	settlementId: z.string().trim().min(1),
 }).strict();
