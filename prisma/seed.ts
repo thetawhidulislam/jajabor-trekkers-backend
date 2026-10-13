@@ -212,7 +212,8 @@ const seedDestinations = async (destinations: SeedData["destinations"], createdB
 		}
 
 		const slug = await getDestinationSlug(destination.name);
-		const { categoryName: _categoryName, images, status, ...fields } = destination;
+		const { categoryName, images, status, ...fields } = destination;
+		void categoryName;
 		const data = {
 			...fields,
 			slug,

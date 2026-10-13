@@ -4,6 +4,9 @@ import {
 	adminDestinationsRouter,
 	destinationsRouter,
 } from "../modules/destinations/destinations.routes";
+import { itineraryRouter } from "../modules/itinerary/itinerary.routes";
+import { packingRouter } from "../modules/packing/packing.routes";
+import { tripsRouter } from "../modules/trips/trips.routes";
 import { usersRouter } from "../modules/users/users.routes";
 import { asyncHandler } from "../utils/asyncHandler";
 import { sendSuccess } from "../utils/ApiResponse";
@@ -15,6 +18,9 @@ apiRouter.use("/categories", categoriesRouter);
 apiRouter.use("/destinations", destinationsRouter);
 apiRouter.use("/admin/categories", adminCategoriesRouter);
 apiRouter.use("/admin/destinations", adminDestinationsRouter);
+apiRouter.use("/trips", tripsRouter);
+apiRouter.use("/trips/:tripId/itinerary", itineraryRouter);
+apiRouter.use("/trips/:tripId/packing", packingRouter);
 
 apiRouter.get(
 	"/health",
