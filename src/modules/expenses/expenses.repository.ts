@@ -35,7 +35,6 @@ export const createExpenseWithSplits = async ({
 	shares,
 }: {
 	tripId: string;
-	data: Omit<CreateExpenseInput, "split" | "amount" | "paidById" | "expenseDate">;
 	title: string;
 	amountMinor: number;
 	category: CreateExpenseInput["category"];
@@ -115,17 +114,17 @@ export const updateExpense = async (
 	amountMinor: number | undefined,
 	shares?: Array<{ userId: string; amountMinor: number }>,
 ): Promise<ExpenseRecord> => prisma.$transaction(async (transaction) => {
-	await transaction.expense.update({
-		where: { id: expenseId, tripId },
-		data: {
-			...(input.title === undefined ? {} : { title: input.title }),
-			...(amountMinor === undefined ? {} : { amount: fromMinor(amountMinor) }),
-			...(input.category === undefined ? {} : { category: input.category }),
-			...(input.paidById === undefined ? {} : { paidById: input.paidById }),
-			...(input.expenseDate === undefined ? {} : { expenseDate: input.expenseDate }),
-			...(input.note === undefined ? {} : { note: input.note }),
-		},
-	});
+	const updateData: Prisma.ExpenseUpdateInput = {
+		...(input.title === undefined ? {} : { title: input.title }),
+		...(amountMinor === undefined ? {} : { amount: fromMinor(amountMinor) }),
+		...(input.category === undefined ? {} : { category: input.category }),
+		...(input.paidById === undefined ? {} : { paidById: input.paidById }),
+		...(input.expenseDate === undefined ? {} : { expenseDate: input.expenseDate }),
+		...(input.note === undefined ? {} : { note: input.note }),
+	};
+	if (Object.keys(updateData).length > 0) {
+		await transaction.expense.update({ where: { id: expenseId, tripId }, data: updateData });
+	}
 	if (shares !== undefined) {
 		await transaction.expenseSplit.deleteMany({ where: { expenseId } });
 		await transaction.expenseSplit.createMany({

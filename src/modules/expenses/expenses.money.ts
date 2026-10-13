@@ -8,7 +8,7 @@ export interface ExpenseMoney {
 	amountMinor: number;
 }
 
-export interface SplitMoney extends Share {}
+export type SplitMoney = Share;
 
 export interface SettlementMoney {
 	fromUserId: string;

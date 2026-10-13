@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { adminCategoriesRouter, categoriesRouter } from "../modules/categories/categories.routes";
+import { expensesRouter } from "../modules/expenses/expenses.routes";
 import {
 	adminDestinationsRouter,
 	destinationsRouter,
@@ -21,6 +22,7 @@ apiRouter.use("/admin/destinations", adminDestinationsRouter);
 apiRouter.use("/trips", tripsRouter);
 apiRouter.use("/trips/:tripId/itinerary", itineraryRouter);
 apiRouter.use("/trips/:tripId/packing", packingRouter);
+apiRouter.use("/trips/:tripId/expenses", expensesRouter);
 
 apiRouter.get(
 	"/health",

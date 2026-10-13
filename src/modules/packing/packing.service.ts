@@ -55,7 +55,7 @@ const assertWritableTrip = async (tripId: string, userId: string) => {
 
 const validateReferences = async (
 	tripId: string,
-	input: Pick<CreatePackingItemInput, "gearItemId" | "assignedToId">,
+	input: { gearItemId?: string | null; assignedToId?: string | null },
 ): Promise<void> => {
 	if (input.gearItemId && !await findGearItem(input.gearItemId)) {
 		throw ApiError.badRequest("gearItemId must reference an existing gear item");
