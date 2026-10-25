@@ -52,7 +52,7 @@ const getPublishedDestination = async (slug: string) => {
 
 const assertReviewEligibility = async (userId: string, destinationId: string): Promise<void> => {
 	if (!await userCanReviewDestination(userId, destinationId)) {
-		throw ApiError.forbidden("You can review a destination after completing a trip to it");
+		throw ApiError.forbidden("You can review a destination after completing a trip to its");
 	}
 };
 
