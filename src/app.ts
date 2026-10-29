@@ -17,6 +17,7 @@ const app = express();
 app.use(helmet());
 app.use(cors(corsOptions));
 app.use(morgan("dev"));
+// Configure app.set("trust proxy", ...) for the deployment; frontend proxying can make all users share one IP.
 app.use("/api/auth", authLimiter);
 app.all("/api/auth/*splat", authHandler);
 app.use("/api", generalLimiter);

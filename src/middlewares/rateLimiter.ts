@@ -9,7 +9,7 @@ const rateLimitHandler = (_request: unknown, response: import("express").Respons
 
 export const generalLimiter = rateLimit({
 	windowMs: 15 * 60 * 1000,
-	limit: 100,
+	limit: 600,
 	standardHeaders: "draft-8",
 	legacyHeaders: false,
 	handler: rateLimitHandler,
@@ -21,4 +21,15 @@ export const authLimiter = rateLimit({
 	standardHeaders: "draft-8",
 	legacyHeaders: false,
 	handler: rateLimitHandler,
+	skip: (request) => {
+		if (request.method !== "POST") {
+			return true;
+		}
+
+		const path = request.path.toLowerCase();
+		return !(
+			/^\/(?:sign-in|sign-up)(?:\/|$)/.test(path) ||
+			path.includes("password")
+		);
+	},
 });
