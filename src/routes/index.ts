@@ -10,12 +10,14 @@ import { packingRouter } from "../modules/packing/packing.routes";
 import { adminReviewsRouter, destinationReviewsRouter } from "../modules/reviews/reviews.routes";
 import { tripsRouter } from "../modules/trips/trips.routes";
 import { usersRouter } from "../modules/users/users.routes";
+import { uploadsRouter } from "../modules/uploads/uploads.routes";
 import { asyncHandler } from "../utils/asyncHandler";
 import { sendSuccess } from "../utils/ApiResponse";
 
 export const apiRouter = Router();
 
 apiRouter.use("/users", usersRouter);
+apiRouter.use("/uploads", uploadsRouter);
 apiRouter.use("/categories", categoriesRouter);
 apiRouter.use("/destinations", destinationsRouter);
 apiRouter.use("/destinations/:slug/reviews", destinationReviewsRouter);

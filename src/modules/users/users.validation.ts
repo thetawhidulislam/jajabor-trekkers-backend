@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isCloudinaryImageUrl } from "../../lib/cloudinary";
 
 export const getUsersQuerySchema = z.object({
 	page: z.coerce.number().int().min(1).default(1),
@@ -10,6 +11,8 @@ export const updateMeSchema = z
 	.object({
 		name: z.string().trim().min(1).max(100).optional(),
 		phone: z.string().trim().max(20).optional(),
-		image: z.string().url().optional(),
+		image: z.string().url().refine(isCloudinaryImageUrl, {
+			message: "Image URL must be hosted by the configured Cloudinary account",
+		}).optional(),
 	})
 	.strict();

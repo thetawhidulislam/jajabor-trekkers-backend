@@ -33,3 +33,11 @@ export const authLimiter = rateLimit({
 		);
 	},
 });
+
+export const uploadSignatureLimiter = rateLimit({
+	windowMs: 15 * 60 * 1000,
+	limit: 30,
+	standardHeaders: "draft-8",
+	legacyHeaders: false,
+	handler: rateLimitHandler,
+});

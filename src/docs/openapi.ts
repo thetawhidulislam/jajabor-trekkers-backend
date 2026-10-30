@@ -7,6 +7,7 @@ import "./itinerary.docs";
 import "./packing.docs";
 import "./expenses.docs";
 import "./reviews.docs";
+import "./uploads.docs";
 import "./health.docs";
 import { OpenApiGeneratorV3 } from "@asteasolutions/zod-to-openapi";
 import { env } from "../config/env";
@@ -24,6 +25,7 @@ export const openApiDocument = generator.generateDocument({
 	tags: [
 		{ name: "Better Auth" },
 		{ name: "Users" },
+		{ name: "Uploads" },
 		{ name: "Categories" },
 		{ name: "Destinations" },
 		{ name: "Trips" },

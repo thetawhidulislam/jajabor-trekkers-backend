@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isCloudinaryImageUrl } from "../../lib/cloudinary";
 
 const difficultySchema = z.enum(["EASY", "MODERATE", "HARD"]);
 const statusSchema = z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]);
@@ -38,7 +39,9 @@ export const adminDestinationListQuerySchema = z.object({
 }).strict().superRefine(validateCostRange);
 
 const imageSchema = z.object({
-	url: z.string().url(),
+	url: z.string().url().refine(isCloudinaryImageUrl, {
+		message: "Image URL must be hosted by the configured Cloudinary account",
+	}),
 	caption: z.string().trim().max(300).optional(),
 	sortOrder: z.number().int().min(0).optional(),
 }).strict();
@@ -51,7 +54,9 @@ const destinationFields = {
 	latitude: z.number().finite().min(-90).max(90).nullable().optional(),
 	longitude: z.number().finite().min(-180).max(180).nullable().optional(),
 	description: z.string().trim().min(1),
-	coverImage: z.string().url(),
+	coverImage: z.string().url().refine(isCloudinaryImageUrl, {
+		message: "Image URL must be hosted by the configured Cloudinary account",
+	}),
 	estimatedCostMin: costSchema,
 	estimatedCostMax: costSchema,
 	recommendedDays: z.number().int().min(1),
