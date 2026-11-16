@@ -11,10 +11,32 @@ const envSchema = z.object({
 	CLOUDINARY_CLOUD_NAME: z.string().trim().optional(),
 	CLOUDINARY_API_KEY: z.string().trim().optional(),
 	CLOUDINARY_API_SECRET: z.string().trim().optional(),
+	RESEND_API_KEY: z.string().trim().min(1).optional(),
+	EMAIL_FROM: z.string().trim().min(1).optional(),
 	WEATHER_API_KEY: z.string().optional(),
 	MAP_API_KEY: z.string().optional(),
 	AI_API_KEY: z.string().optional(),
 	REDIS_URL: z.string().optional(),
+}).superRefine((values, context) => {
+	if (values.RESEND_API_KEY && !values.EMAIL_FROM) {
+		context.addIssue({
+			code: "custom",
+			path: ["EMAIL_FROM"],
+			message: "EMAIL_FROM is required when RESEND_API_KEY is set",
+		});
+	}
+
+	if (values.NODE_ENV === "production") {
+		for (const key of ["RESEND_API_KEY", "EMAIL_FROM"] as const) {
+			if (!values[key]) {
+				context.addIssue({
+					code: "custom",
+					path: [key],
+					message: `${key} is required in production`,
+				});
+			}
+		}
+	}
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

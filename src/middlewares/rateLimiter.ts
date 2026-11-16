@@ -29,9 +29,18 @@ export const authLimiter = rateLimit({
 		const path = request.path.toLowerCase();
 		return !(
 			/^\/(?:sign-in|sign-up)(?:\/|$)/.test(path) ||
-			path.includes("password")
+			path.split("/").some((segment) => segment.includes("password"))
 		);
 	},
+});
+
+export const passwordResetLimiter = rateLimit({
+	windowMs: 15 * 60 * 1000,
+	limit: 5,
+	standardHeaders: "draft-8",
+	legacyHeaders: false,
+	handler: rateLimitHandler,
+	skip: (request) => request.method !== "POST",
 });
 
 export const uploadSignatureLimiter = rateLimit({

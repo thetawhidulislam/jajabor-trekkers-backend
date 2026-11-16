@@ -8,7 +8,7 @@ import { openApiDocument } from "./docs/openapi";
 import { authHandler } from "./lib/auth";
 import { errorHandler } from "./middlewares/errorHandler";
 import { notFound } from "./middlewares/notFound";
-import { authLimiter, generalLimiter } from "./middlewares/rateLimiter";
+import { authLimiter, generalLimiter, passwordResetLimiter } from "./middlewares/rateLimiter";
 import { apiRouter } from "./routes";
 import swaggerUi from "swagger-ui-express";
 
@@ -16,8 +16,11 @@ const app = express();
 
 app.use(helmet());
 app.use(cors(corsOptions));
-app.use(morgan("dev"));
-// Configure app.set("trust proxy", ...) for the deployment; frontend proxying can make all users share one IP.
+app.use(morgan("dev", {
+	skip: (request) => env.NODE_ENV === "production" && request.originalUrl.includes("/reset-password"),
+}));
+// Configure app.set("trust proxy", ...) correctly at deployment; frontend proxies can make all users share one IP.
+app.use("/api/auth/request-password-reset", passwordResetLimiter);
 app.use("/api/auth", authLimiter);
 app.all("/api/auth/*splat", authHandler);
 app.use("/api", generalLimiter);

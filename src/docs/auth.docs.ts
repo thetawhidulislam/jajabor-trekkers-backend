@@ -60,6 +60,42 @@ registry.registerPath({
 });
 
 registry.registerPath({
+	method: "post",
+	path: "/api/auth/request-password-reset",
+	tags: ["Better Auth"],
+	summary: "Request a password reset email",
+	...authenticationDetails("public"),
+	request: {
+		body: jsonBody(z.object({
+			email: z.email(),
+		})),
+	},
+	responses: {
+		200: { description: "A reset email was requested, if the email is registered.", content: { "application/json": { schema: authSuccessSchema } } },
+		400: { description: "Invalid email address.", content: { "application/json": { schema: authErrorSchema } } },
+		429: { description: "Too many password reset requests.", content: { "application/json": { schema: authErrorSchema } } },
+	},
+});
+
+registry.registerPath({
+	method: "post",
+	path: "/api/auth/reset-password",
+	tags: ["Better Auth"],
+	summary: "Set a new password with a reset token",
+	...authenticationDetails("public"),
+	request: {
+		body: jsonBody(z.object({
+			newPassword: z.string().min(8),
+			token: z.string(),
+		})),
+	},
+	responses: {
+		200: { description: "Password changed successfully.", content: { "application/json": { schema: authSuccessSchema } } },
+		400: { description: "Invalid or expired reset token.", content: { "application/json": { schema: authErrorSchema } } },
+	},
+});
+
+registry.registerPath({
 	method: "get",
 	path: "/api/auth/get-session",
 	tags: ["Better Auth"],
