@@ -9,7 +9,7 @@ registry.registerPath({
 	method: "post",
 	path: "/api/auth/sign-up/email",
 	tags: ["Better Auth"],
-	summary: "Create an account with email and password",
+	summary: "Create an account with email and passwords",
 	...authenticationDetails("public"),
 	request: {
 		body: jsonBody(z.object({
